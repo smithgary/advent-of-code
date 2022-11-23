@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class DataLoader {
-    ArrayList<String> column1 = new ArrayList<>();
+    public ArrayList<String> column1 = new ArrayList<>();
     ArrayList<Integer> column2 = new ArrayList<>();
 
     String fileName = "";
