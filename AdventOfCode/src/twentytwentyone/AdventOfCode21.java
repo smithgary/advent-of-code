@@ -4,12 +4,16 @@ import java.util.stream.IntStream;
 
 public class AdventOfCode21 {
     public static void main(String[] args) {
-        Integer dayToRun = 6;
+        Integer dayToRun = 10;
+        Integer partOneOrTwo = 1;
+        //Integer inputSource = DataInputSource.SAMPLE.getValue();
+        Integer inputSource = DataInputSource.TEST.getValue();
+
 
         /**
          * Day 1
          */
-        if(dayToRun == 1) {
+        if (dayToRun == 1) {
             Day1 day1 = new Day1();
             String day1Input = "/Users/gvsmith/Projects/Blackjack/AdventOfCode21/src/data/day1sample";
             day1.setFileName(day1Input);
@@ -24,7 +28,7 @@ public class AdventOfCode21 {
         /**
          * Day 2
          */
-        if(dayToRun == 2) {
+        if (dayToRun == 2) {
             Day2 day2 = new Day2();
             day2.setFileName("/Users/gvsmith/Projects/Blackjack/AdventOfCode21/src/data/day2sample");
             //Part 1
@@ -40,7 +44,7 @@ public class AdventOfCode21 {
          * Day 3
          * Had to write a recursive function to achieve part 2.
          */
-        if(dayToRun == 3) {
+        if (dayToRun == 3) {
             Day3 day3 = new Day3();
             day3.setFileName("/Users/gvsmith/Projects/Blackjack/AdventOfCode21/src/data/day3sample");
             day3.getGammaEpsilon(DataInputSource.SAMPLE);   //198
@@ -53,7 +57,7 @@ public class AdventOfCode21 {
         /**
          * Day 4
          */
-        if(dayToRun == 4) {
+        if (dayToRun == 4) {
             Day4 day4 = new Day4();
             day4.setFileName("/Users/gvsmith/Projects/Blackjack/AdventOfCode21/src/data/day4sample");
 
@@ -69,7 +73,7 @@ public class AdventOfCode21 {
          * Learned to use IntStream.rangeClosed
          * as opposed to IntStream.range, which doesn't include the last item.
          */
-        if(dayToRun == 5) {
+        if (dayToRun == 5) {
             Day5 day5 = new Day5();
             day5.setFileName("/Users/gvsmith/Projects/Blackjack/AdventOfCode21/src/data/day5sample");
 
@@ -86,7 +90,7 @@ public class AdventOfCode21 {
         if (dayToRun == 6) {
             Day6 day6 = new Day6();
             day6.setFileName("/Users/gvsmith/Projects/Blackjack/AdventOfCode21/src/data/day6sample");
-           // Part 1
+            // Part 1
             //day6.countLanternFish(DataInputSource.SAMPLE, 80);  //80 -> 5934
             //day6.countLanternFish(DataInputSource.TEST, 80);    //80 -> 393019
 
@@ -95,7 +99,6 @@ public class AdventOfCode21 {
             //day6.countLanternFish(DataInputSource.TEST, 80);    //80 -> 393019
 
 
-            
         }
         /**
          * Day 7
@@ -138,7 +141,7 @@ public class AdventOfCode21 {
             //day8.getDiff("abcde", "abcd");
         }
         /**
-         * Day 8
+         * Day 9
          */
         if (dayToRun == 9) {
             Day9 day9 = new Day9();
@@ -160,5 +163,31 @@ public class AdventOfCode21 {
             day9.printOutBucketNumbers();
             day9.summariseBuckets();
         }
+
+        /** Day 10
+         *
+         * */
+        if (dayToRun == 10) {
+            Day10 day10 = new Day10();
+            String entrySample = "C:/Users/gary/Dev/advent-of-code/AdventOfCode/src/twentytwentyone/data/day10sample";
+            String entryInput = "C:/Users/gary/Dev/advent-of-code/AdventOfCode/src/twentytwentyone/data/day10Input";
+
+            if (partOneOrTwo == 1) {
+                // Part 1 trial
+                if (inputSource == DataInputSource.SAMPLE.getValue()) {
+                    day10.readLines(entrySample, 1);    // Ans = 26397
+                } else {
+                    day10.readLines(entryInput, 1);     //Ans = 318099
+                }
+                day10.removeCorrupted();
+            } else {
+                if (inputSource == DataInputSource.SAMPLE.getValue()) {
+                    day10.readLines(entrySample, 1);    // Ans = 288957
+                } else {
+                    day10.readLines(entryInput, 1);     //Ans = 563570797 => WRONG!
+                }
+                day10.completeMissing();
+            }
         }
+    }
 }
