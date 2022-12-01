@@ -5,6 +5,27 @@ import java.util.List;
 
 public class Utilities {
 
+    public List<Integer> getMaxValue(List<String> input) {
+        List<Integer> intList = new ArrayList<>();
+
+        for (int i=0; i < input.size(); i++) {
+            String maybeNumber = input.get(i);
+            //Assume its a number, might need to try/catch for NumberFormatException
+            intList.add(Integer.parseInt(maybeNumber));
+        }
+        return intList;
+    }
+    public List<Integer> getListOfIntegersFromListOfString(List<String> input) {
+        List<Integer> intList = new ArrayList<>();
+
+        for (int i=0; i < input.size(); i++) {
+            String maybeNumber = input.get(i);
+            //Assume its a number, might need to try/catch for NumberFormatException
+            intList.add(Integer.parseInt(maybeNumber));
+        }
+        return intList;
+    }
+
     /**
     Pass in a String of digits and get an List<Integer>
      eg. "5483143223" -> [5, 4, 8, 3, 1, 4, 3, 2, 2, 3]
