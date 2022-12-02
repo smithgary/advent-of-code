@@ -5,16 +5,6 @@ import java.util.List;
 
 public class Utilities {
 
-    public List<Integer> getMaxValue(List<String> input) {
-        List<Integer> intList = new ArrayList<>();
-
-        for (int i=0; i < input.size(); i++) {
-            String maybeNumber = input.get(i);
-            //Assume its a number, might need to try/catch for NumberFormatException
-            intList.add(Integer.parseInt(maybeNumber));
-        }
-        return intList;
-    }
     public List<Integer> getListOfIntegersFromListOfString(List<String> input) {
         List<Integer> intList = new ArrayList<>();
 
