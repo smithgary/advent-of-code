@@ -1,7 +1,7 @@
 package util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.*;
 
 public class Utilities {
 
@@ -15,6 +15,25 @@ public class Utilities {
         }
         return intList;
     }
+
+    public List<String> splitInTwo(String s) {
+        List<String> newList = new ArrayList<>();
+        newList.add(s.substring(0, s.length()/2));
+        newList.add(s.substring(s.length()/2));
+        return newList;
+    }
+
+    public List<List<String>> getGroupsOfThree(ArrayList<String> listOfStrings) {
+
+        Map<Integer, List<String>> groups = listOfStrings.stream()
+                .collect(Collectors.groupingBy(s -> listOfStrings.indexOf(s)/3));
+
+        List<List<String>> newGroupings = new ArrayList<>(groups.values());
+
+        return newGroupings;
+
+    }
+
 
     /**
     Pass in a String of digits and get an List<Integer>
