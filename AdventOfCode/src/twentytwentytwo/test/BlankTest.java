@@ -12,12 +12,12 @@
 //    String entrySample = "AdventOfCode/src/twentytwentytwo/data/dayXsample";
 //    String entryInput = "AdventOfCode/src/twentytwentytwo/data/dayXInput";
 //
-//    private DayX dayX;
+//    private AocTest dayX;
 //    private String home;
 //
 //    @Before
 //    public void beforeEach() {
-//        dayX = new DayX();
+//        dayX = new Day1();
 //        home = System.getProperty("user.dir");
 //    }
 //
