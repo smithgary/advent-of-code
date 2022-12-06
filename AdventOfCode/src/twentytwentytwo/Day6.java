@@ -21,7 +21,7 @@ public class Day6 extends DataLoader implements AocTest {
     }
 
     public Integer getUniqueOccurrence(String s, Integer required) {
-        Integer firstFourUnique = 0;
+        Integer firstUniqueCharacterOfRequiredSize = 0;
         char[] input = s.toCharArray();
         for(int i=required -1; i<input.length; i++){
             Set<Character> uniqueOrNot = new HashSet<>();
@@ -29,10 +29,10 @@ public class Day6 extends DataLoader implements AocTest {
                 uniqueOrNot.add(input[i-j]);
             }
             if (uniqueOrNot.size() == required) {
-                firstFourUnique = i + 1;
-                return firstFourUnique;
+                firstUniqueCharacterOfRequiredSize = i + 1;
+                return firstUniqueCharacterOfRequiredSize;
             }
         }
-        return firstFourUnique;
+        return firstUniqueCharacterOfRequiredSize;
     }
 }
