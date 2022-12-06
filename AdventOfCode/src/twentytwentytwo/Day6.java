@@ -1,34 +1,23 @@
 package twentytwentytwo;
 
 import twentytwentyone.*;
-import util.*;
-
 import java.util.*;
 import java.util.stream.*;
 
 public class Day6 extends DataLoader implements AocTest {
-    Utilities utilities = new Utilities();
 
     @Override
     public String calculatePartOne() {
         List<String> startingList = column1.stream().collect(Collectors.toList());
 
-        for(int i=0; i<startingList.size(); i++) {
-            System.out.println(getUniqueOccurrence(startingList.get(i), 4));
-        }
-        String firstOccurrence = getUniqueOccurrence(startingList.get(0), 4).toString();
-        return firstOccurrence;
+        return getUniqueOccurrence(startingList.get(0), 4).toString();
     }
 
     @Override
     public String calculatePartTwo() {
         List<String> startingList = column1.stream().collect(Collectors.toList());
 
-        for(int i=0; i<startingList.size(); i++) {
-            System.out.println(getUniqueOccurrence(startingList.get(i), 14));
-        }
-        String firstOccurrence = getUniqueOccurrence(startingList.get(0), 14).toString();
-        return firstOccurrence;
+        return getUniqueOccurrence(startingList.get(0), 14).toString();
     }
 
     public Integer getUniqueOccurrence(String s, Integer required) {
