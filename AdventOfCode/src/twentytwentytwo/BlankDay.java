@@ -12,7 +12,7 @@ public class BlankDay extends DataLoader implements AocTest {
     @Override
     public String calculatePartOne() {
         List<String> startingList = column1.stream().collect(Collectors.toList());
-        return null;
+        return "";
     }
 
     @Override
