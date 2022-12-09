@@ -27,7 +27,7 @@ public class Day8Test {
 
         String result = testDay.calculatePartOne();
 
-        assertEquals("", result);
+        assertEquals("21", result);
 
     }
 
@@ -38,7 +38,7 @@ public class Day8Test {
 
         String result = testDay.calculatePartOne();
 
-        assertEquals("", result);
+        assertEquals("1792", result);
 
     }
 
@@ -49,7 +49,7 @@ public class Day8Test {
 
         String result = testDay.calculatePartTwo();
 
-        assertEquals("", result);
+        assertEquals("8", result);
 
     }
 
@@ -60,7 +60,7 @@ public class Day8Test {
 
         String result = testDay.calculatePartTwo();
 
-        assertEquals("", result);
+        assertEquals("334880", result);
 
     }
 }
