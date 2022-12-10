@@ -27,7 +27,7 @@ public class Day10Test {
 
         String result = testDay.calculatePartOne();
 
-        assertEquals("", result);
+        assertEquals("13140", result);
 
     }
 
@@ -38,7 +38,7 @@ public class Day10Test {
 
         String result = testDay.calculatePartOne();
 
-        assertEquals("", result);
+        assertEquals("15260", result);
 
     }
 
