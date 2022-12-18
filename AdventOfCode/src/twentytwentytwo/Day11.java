@@ -79,17 +79,15 @@ public class Day11 extends DataLoader implements AocTest {
             Monkey monkey = monkeys.get(i);
             Integer startingItemSize = monkey.getItems().size();
             for (int j=0;j< startingItemSize; j++) {
-                BigInteger worryLevel = monkey.getItems().get(j);
-                BigInteger newWorryLevel = monkey.operation.operate(worryLevel);
+                Long worryLevel = monkey.getItems().get(j);
+                Long newWorryLevel = monkey.operation.operate(worryLevel);
                 monkey.setOperationCount(monkey.getOperationCount() + 1);
-                BigInteger boredLevel = newWorryLevel;
+                Long boredLevel = newWorryLevel;
                 if(!isPartTwo) {
-                    boredLevel = newWorryLevel.divide(BigInteger.valueOf(3L));//newWorryLevel / 3;
+                    boredLevel = newWorryLevel / 3;
                 }
-                BigInteger divisor = monkey.getTest().getDivisor();
-                //Boolean isDividable = (boredLevel % divisor == 0);
-                //BigInteger dividedValue = boredLevel.divide(divisor);
-                Boolean isDividable = boredLevel.mod(divisor).equals(BigInteger.ZERO);
+                Long divisor = monkey.getTest().getDivisor();
+                Boolean isDividable = boredLevel % divisor == 0;
                 if (isDividable) {
                     monkeys.get(monkey.getTest().getReceivingMonkeyOnPass()).getItems().add(boredLevel);
                 } else {
@@ -120,22 +118,21 @@ public class Day11 extends DataLoader implements AocTest {
                     String[] change = new String[2];
                     change[0] = line[6];
                     change[1] = line[7];
-                    OperationBuilder operationBuilder = new OperationBuilder(change, BigInteger.ZERO);
-                    Operation operation = operationBuilder.build(BigInteger.ZERO, change);
+                    OperationBuilder operationBuilder = new OperationBuilder(change, 0L);
+                    Operation operation = operationBuilder.build(0L, change);
                     monkeys.get(currentMonkeyId).setOperation(operation);
                 }
                 if (line[2].equals("Starting")) {
-                    List<BigInteger> startingItems = new ArrayList<>();
+                    List<Long> startingItems = new ArrayList<>();
                     for(int j=4; j<line.length; j++) {
                         String startingItemStr = line[j].replace(",", "").trim();
-                        //Long startingItem = Long.getLong(startingItemStr);
-                        startingItems.add(new BigInteger(startingItemStr));
+                        startingItems.add(Long.valueOf(startingItemStr));
                     }
                     monkeys.get(currentMonkeyId).setItems(startingItems);
                 }
                 if (line[2].equals("Test:")) {
                     String denominator = line[5];
-                    Test test = new Test(new BigInteger(denominator));// denominator);
+                    Test test = new Test(Long.valueOf(denominator));
                     monkeys.get(currentMonkeyId).setTest(test);
                 }
                 if (line.length > 5) {
@@ -156,7 +153,7 @@ public class Day11 extends DataLoader implements AocTest {
 
 class Monkey {
     private Integer Id;
-    List<BigInteger> items;
+    List<Long> items;
     Operation operation;
     Integer operationCount;
 
@@ -166,11 +163,11 @@ class Monkey {
         Id = id;
     }
 
-    public List<BigInteger> getItems() {
+    public List<Long> getItems() {
         return items;
     }
 
-    public void setItems(List<BigInteger> items) {
+    public void setItems(List<Long> items) {
         this.items = items;
     }
 
@@ -197,52 +194,53 @@ class Monkey {
 }
 
 interface Operation {
-    public BigInteger operate(BigInteger old);
+    public Long operate(Long old);
 }
 
 class OperationBuilder {
-    public OperationBuilder(String[] change, BigInteger old) {
+    public OperationBuilder(String[] change, Long old) {
         build(old, change);
     }
-    public Operation build(BigInteger old, String[] change){
+    public Operation build(Long old, String[] change){
        return new Operation() {
            @Override
-           public BigInteger operate(BigInteger old) {
-               BigInteger value = BigInteger.ZERO;
+           public Long operate(Long old) {
+               Long value = 0L;
                Boolean usingOld = false;
                if (change[1].equals("old")) {
                        usingOld = true;
                } else {
-                   value = new BigInteger(change[1]);
+                   value = Long.valueOf(change[1]);
                }
                if(change[0].equals("+")) {
-                   return old.add(usingOld ? old : value);
+                   return old + (usingOld ? old : value);
                }
                if(change[0].equals("-")) {
-                   return old.subtract(usingOld ? old : value);
+                   return old - (usingOld ? old : value);
                }
                if(change[0].equals("*")) {
-                   return old.multiply(usingOld ? old : value);
+                   return old * (usingOld ? old : value);
                }
-               return BigInteger.ZERO;
+               return 0L;
+               //return BigInteger.ZERO;
            }
        };
     }
 }
 
 class Test {
-    private BigInteger divisor;
+    private Long divisor;
     private Integer receivingMonkeyOnFail;
     private Integer receivingMonkeyOnPass;
-    public Test(BigInteger divisor) {
+    public Test(Long divisor) {
         this.divisor = divisor;
     }
 
-    public BigInteger getDivisor() {
+    public Long getDivisor() {
         return divisor;
     }
 
-    public void setDivisor(BigInteger divisor) {
+    public void setDivisor(Long divisor) {
         this.divisor = divisor;
     }
 
