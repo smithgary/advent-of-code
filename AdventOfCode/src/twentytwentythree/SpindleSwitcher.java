@@ -7,15 +7,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import static java.util.stream.Collectors.*;
+import static java.util.stream.IntStream.*;
+
 public class SpindleSwitcher {
     // load data
     private final String recipeFile = "C:/Share/Product Recipes.CSV";
@@ -31,6 +36,8 @@ public class SpindleSwitcher {
     public static final int NO_AVAILABLE_HEADS = 7;
     public static final int OUTPUT_FILE_WRITE_ERROR = 8;
     public static final int RECIPE_NOT_FOUND = 9;
+    public static final int TOO_MANY_PATTERNS = 10;
+    public static final int NO_HEADS_SELECTED = 11;
     private ArrayList<String> recipeData;
     private List<RecipeLine> recipeLines;
     private List<RecipeLine> outputWorkOrder;
@@ -50,22 +57,48 @@ public class SpindleSwitcher {
         ui.displayOptions(this);
     }
 
-    public void applyChanges(){
+    public void grabProductCode() {
+        // Set Product code entered by user
+        productCode = ui.getFormLabels().get("Load Product Code").getText(); //"416999901";
+    }
 
-        List<Integer> inactiveSpindles = IntStream.rangeClosed(1, 12)
+    public List<Integer> loadInactiveSpindles() {
+        List<Integer> inactiveSpindles = rangeClosed(1, 12)
                 .filter(i -> !ui.getFormToggleButtons().get("Spindle " + i).isSelected())
                 .boxed()
                 .collect(toList());
 
+        if (inactiveSpindles.isEmpty()) {
+            markAsFailed(NO_HEADS_SELECTED, "No heads selected");
+            // Not really a failure, can continue with no heads disabled - will just be the same result
+            return Collections.emptyList();
+        }
         StringBuilder sb = new StringBuilder();
         inactiveSpindles.forEach(i -> sb.append(i + ","));
         String list = sb.toString().substring(0, sb.length()-1);
         String output = "Spindles " + list + " disabled. Now re-arranging...";
         ui.updateTextArea(output, ui.getOutputTextArea());
+        return inactiveSpindles;
+    }
 
+    public Integer getInitialSettings() {
+        // Todo do something with this int.
+        grabProductCode();
+        loadRecipeInfo();
+        if (reallocateFailed) {
+            return getReallocatedErrorCode();
+        }
+        summariseConeLocations(recipeLines);
+        return 1;
+    }
+
+    public void applyChanges(){
         // Set Product code entered by user
-        productCode = ui.getFormLabels().get("Load Product Code").getText(); //"416999901";
+        grabProductCode();
+        // Load and set inactive spindles
+        List<Integer> inactiveSpindles = loadInactiveSpindles();
         setInactiveSpindles(inactiveSpindles);
+
         // Perform rearrange , get status as result.
         Integer result = reviseRecipeFile();
         String resultText = REARRANGE_SUCCEEDED.equals(result) ? "Success" : getReallocateErrorMsg();
@@ -76,14 +109,68 @@ public class SpindleSwitcher {
             }
         }
         ui.updateTextArea(finalLine, ui.getOutputTextArea());
+        summariseConeLocations(outputWorkOrder);
     }
 
-    public Integer reviseRecipeFile() {
+    public Integer loadRecipeInfo() {
         reallocateFailed = false;
         newFileName = "C:/Share/Product Recipes_Redistributed.CSV";
 
-        // Load original CSV file
+        // Load original CSV file into recipeData
         loadRecipeFile();
+        if (reallocateFailed) {
+            return getReallocatedErrorCode();
+        }
+        recipeLines = new ArrayList<>();
+        recipeData.stream().forEach(r -> setRecipeLine(r));
+        if (recipeLines.size() < 1) {
+            markAsFailed(RECIPE_NOT_FOUND, String.format("Requested recipe %s not found in settings file", productCode));
+            return getReallocatedErrorCode();
+        }
+        return 1;
+    }
+
+    public void summariseConeLocations(List<RecipeLine> coneList) {
+
+        // Build a comma separated String for each Spindle (head), total patterns per section, ignore group.
+        Map<Integer, Map<String, List<String>>> asdf = new HashMap<>();
+
+        rangeClosed(1,12)
+                .forEach(i -> {
+                    Map<String, List<String>> collect = coneList.stream().filter(cl -> cl.getHead().equals(Integer.toString(i)))
+                            .collect(groupingBy(RecipeLine::getSection, mapping(RecipeLine::getPattern, toList())));
+                    asdf.put(i, collect);
+                });
+
+        System.out.println("");
+        Map<Integer, String> colourStatusForHead = new HashMap<>();
+        asdf.entrySet().stream().forEach(es -> {
+            Integer headNumber = es.getKey();
+            Map<String, List<String>> pattersPerSectionForHead = es.getValue();
+            StringBuilder stringBuilder = new StringBuilder();
+            pattersPerSectionForHead.entrySet().stream()
+                    .forEach(sect -> {
+                        String sectName = sect.getKey();
+                        List<String> patterns = sect.getValue();
+                        Integer patternCount = patterns.size();
+                        Set<String> uniquePatterns = new HashSet<>(patterns);
+                        // Check to ensure all same pattern (colour)
+                        if (uniquePatterns.size() > 1) {
+                            markAsFailed(TOO_MANY_PATTERNS, String.format("More than one pattern found for head %s in section %s", headNumber, sectName));
+                            stringBuilder.append(sectName + " !!> 1; ");
+                        }
+                        String pattern = uniquePatterns.iterator().next();
+                        stringBuilder.append(sectName + " : " + pattern + "(" + patternCount + "); ");
+                    });
+            colourStatusForHead.put(headNumber, stringBuilder.toString());
+        });
+
+        colourStatusForHead.entrySet().stream()
+                .forEach(head -> ui.getFormLabels().get("Spindle " + head.getKey() + "out").setText(head.getValue()));
+
+    }
+    public Integer reviseRecipeFile() {
+        loadRecipeInfo();
         if (reallocateFailed) {
             return getReallocatedErrorCode();
         }
@@ -115,11 +202,7 @@ public class SpindleSwitcher {
     }
 
     public List<RecipeLine> getRearrangedList() {
-        recipeLines = new ArrayList<>();
-        recipeData.stream().forEach(r -> setRecipeLine(r));
-        if (recipeLines.size() < 1) {
-            markAsFailed(RECIPE_NOT_FOUND, String.format("Requested recipe %s not found in settings file", productCode));
-        }
+
         List<RecipeLine> conesToBeMoved = getCones(true);
         List<RecipeLine> conesAlreadyInPlace = getCones(false);
         for (RecipeLine cone : conesToBeMoved) {

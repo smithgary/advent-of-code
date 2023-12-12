@@ -18,7 +18,7 @@ public class SpindleSwitcherTest {
     @Test
     public void testMain(){
         SpindleSwitcher spindleSwitcher = new SpindleSwitcher();
-        spindleSwitcher.reviseRecipeFile();
+        spindleSwitcher.displayOptions();
 
     }
 
@@ -42,7 +42,6 @@ public class SpindleSwitcherTest {
         // Head 2 => 2.42622705, 2.41750977 SUM = 4.84373682 *** Smallest
         // Head 3 => 2.4329136, 2.39452785, 2.39452698 SUM = 7.22196843
         assertEquals("2", headWithMostCapacity);
-
 
     }
 
